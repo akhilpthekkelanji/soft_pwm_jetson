@@ -17,8 +17,8 @@ rmmod soft_pwm
 
 ### Reading and writing values
 
-On inserting the module, three devices will be registerd namely pwm_yaw, pwm_pitch and pwm_roll
-in the ```sys/class/soft_pwm``` directory. Each device has the folowing attributes:
+On inserting the module, three devices will be registerd namely pwm_yaw, pwm_pitch and pwm_roll in the 
+```sys/class/soft_pwm``` directory. Each device has the folowing attributes:
   
 
 1.```pulse```
