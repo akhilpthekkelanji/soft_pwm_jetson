@@ -19,13 +19,11 @@ rmmod soft_pwm
 
 On inserting the module, three devices will be registerd namely pwm_yaw, pwm_pitch and pwm_roll
 in the ```sys/class/soft_pwm``` directory. Each device has the folowing attributes:
-   
-	```
-	pulse
-	```
-	```
-	period
-	```
+  
+
+1.```pulse```
+
+2.```period```
 
 The pulse width of each device can be changed by writing a value between 1000 and 2000 to the ```pulse```
 attribute. The current pulse width can also be read from it.
