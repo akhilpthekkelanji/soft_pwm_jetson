@@ -67,7 +67,7 @@ unsigned int pulse3 = 1500;
 
 int k;  // Counter for copying
 
-int ncycle = 0;
+char* lp_stat = "Loop Not Running";
 
 DEFINE_MUTEX(mu_lock);
 
@@ -148,19 +148,25 @@ static int thread_fn(void *unused)
 				gpio_set_value(second_pin, true);
 				gpio_set_value(third_pin, true);
 			#else
-				ncycle++;
+				lp_stat = "All pins set";
 			#endif
 			udelay(min_t);
 			#ifndef CONFIG_X86_64
 				gpio_set_value(first_pin, false);
+			#else
+				lp_stat = "First pin is low";
 			#endif
 			udelay(mid_t-min_t);
 			#ifndef CONFIG_X86_64
 				gpio_set_value(second_pin, false);
+			#else
+				lp_stat = "Second pin is low";
 			#endif
 			udelay(max_t-mid_t);
 			#ifndef CONFIG_X86_64
 				gpio_set_value(third_pin, false);
+			#else
+				lp_stat = "Third pin is low";
 			#endif
 			preempt_enable();
 			local_irq_enable();
@@ -173,10 +179,10 @@ static int thread_fn(void *unused)
 }
 
 // Show and Store Functions
-static ssize_t ncycle_show(struct kobject *kobj, struct kobj_attribute *attr,
+static ssize_t lp_stat_show(struct kobject *kobj, struct kobj_attribute *attr,
 	char *buf)
 {
-	return sprintf(buf, "%d\n", ncycle);
+	return sprintf(buf, "%s\n", lp_stat);
 }
 
 static ssize_t period_show(struct kobject *kobj, struct kobj_attribute *attr,
@@ -245,8 +251,8 @@ static ssize_t pulse_store3(struct kobject *kobj, struct kobj_attribute *attr,
 static struct kobj_attribute period_attribute =
 	__ATTR(period, 0644, period_show, period_store);
 // Common attribute for loop count	
-static struct kobj_attribute ncycle_attribute =
-	__ATTR(ncycle, 0644, ncycle_show, NULL);
+static struct kobj_attribute lp_stat_attribute =
+	__ATTR(lp_stat, 0644, lp_stat_show, NULL);
 
 // Attrubute for yaw
 static struct kobj_attribute pulse1_attribute =
@@ -265,7 +271,7 @@ static struct kobj_attribute pulse3_attribute =
 static struct attribute *attrs1[] = {
 	&period_attribute.attr,
 	&pulse1_attribute.attr,
-	&ncycle_attribute.attr,
+	&lp_stat_attribute.attr,
 	NULL,
 };
 
@@ -276,7 +282,7 @@ static struct attribute_group attr_group1 = {
 static struct attribute *attrs2[] = {
 	&period_attribute.attr,
 	&pulse2_attribute.attr,
-	&ncycle_attribute.attr,
+	&lp_stat_attribute.attr,
 	NULL,
 };
 
@@ -287,7 +293,7 @@ static struct attribute_group attr_group2 = {
 static struct attribute *attrs3[] = {
 	&period_attribute.attr,
 	&pulse3_attribute.attr,
-	&ncycle_attribute.attr,
+	&lp_stat_attribute.attr,
 	NULL,
 };
 
@@ -367,7 +373,6 @@ static int __init start_kernel(void)
 		#endif
 		printk(KERN_INFO "Thread Created successfully\n");
 	} else {
-		ncycle = 0;
 		printk(KERN_ERR "Thread creation failed\n");
 	}
 	mutex_init(&mu_lock);
