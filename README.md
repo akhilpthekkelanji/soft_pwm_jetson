@@ -17,9 +17,9 @@ rmmod soft_pwm
 
 ### Reading and writing values
 
-On inserting the module, three devices will be registerd namely pwm_yaw, pwm_pitch and pwm_roll in the 
+On inserting the module, three devices will be registerd namely pwm_yaw, pwm_pitch and pwm_roll in the
 ```sys/class/soft_pwm``` directory. Each device has the folowing attributes:
-  
+
 
 1.```pulse```
 
@@ -39,3 +39,8 @@ echo 1200 > pulse
 ```
 cat > pulse
 ```
+### pwm_tx2_src_mod
+
+This is a modified version of the LKM that can be loaded on PC as well as TX2. It does not claim access
+to GPIO pins when loaded on PC. Instead, a third attribute ```lp_stat``` outputs the number of times
+the PWM generating loop has run. This can be used to check whether the loop is running or not.
